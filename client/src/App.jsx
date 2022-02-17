@@ -1,14 +1,15 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ProductState from "./contexts/ProductState";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import PlayerState from "./contexts/PlayerState";
 import Main from "./views/Main";
 function App() {
   return (
     <BrowserRouter>
-      <ProductState>
+      <PlayerState>
         <Routes>
-          <Route path="/" element={<Main />} />
+          <Route path="/" element={<Navigate to ={"/player/list"} />} />
+          <Route path="/player/list" element={<Main />} />
         </Routes>
-      </ProductState>
+      </PlayerState>
     </BrowserRouter>
   );
 }

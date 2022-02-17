@@ -1,38 +1,39 @@
 const {ROUTE_NAME} = require("../utils/constants")
-const Author = require(`../models/${ROUTE_NAME}.model`);
+const Player = require(`../models/${ROUTE_NAME}.model`);
 const handlerError = (res) => (err) => {
   res.status(400);
   res.json({ message: `Something went wrong with${ROUTE_NAME}` , data: err });
 };
 const create = (req, res) => {
-  Author.create(req.body)
-    .then((newAuthor) => res.json({ author: newAuthor }))
+  Player.create(req.body)
+    .then((newPlayer) => res.json({ player : newPlayer }))
     .catch(handlerError(res));
 };
 const findAll = (req, res) => {
-  Author.find()
-    .then((ListOfAuthors) => res.json({ author: ListOfAuthors }))
+  Player.find()
+    .then((ListOfPlayers) => res.json({ player : ListOfPlayers }))
     .catch(handlerError(res));
 };
 const findOne = (req, res) => {
   const { id } = req.params;
-  Author.findById(id)
-    .then((oneAuthor) => res.json({ author: oneAuthor }))
-    .catch(handlerError(res));
-};
-const update = (req, res) => {
-  const { id } = req.params;
-  const { title} = req.body;
-  Author.findOneAndUpdate({_id:id}, { title }, { new: true })
-    .then((oneAuthor) => res.json({ author: oneAuthor }))
+  Player.findById(id)
+    .then((onePlayer) => res.json({ player : onePlayer }))
     .catch(handlerError(res));
 };
 const deleteOne = (req, res) => {
   const { id } = req.params;
-  Author.findByIdAndDelete(id)
+  Player.findByIdAndDelete(id)
       .then(deleteConfirmation => res.json(deleteConfirmation))
       .catch(handlerError(res))
 }
+//es necessary change depending on model
+const update = (req, res) => {
+  const { id } = req.params;
+  const { title} = req.body;
+  Player.findOneAndUpdate({_id:id}, { title }, { new: true })
+    .then((onePlayer) => res.json({ player : onePlayer }))
+    .catch(handlerError(res));
+};
 
 module.exports = {
   create,
