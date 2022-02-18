@@ -29,8 +29,9 @@ const deleteOne = (req, res) => {
 //es necessary change depending on model
 const update = (req, res) => {
   const { id } = req.params;
-  const { title} = req.body;
-  Player.findOneAndUpdate({_id:id}, { title }, { new: true })
+  //it depends of the model important change!
+  const { name,position, game1,game2,game3} = req.body;
+  Player.findOneAndUpdate({_id:id}, { name,position, game1,game2,game3}, { new: true })
     .then((onePlayer) => res.json({ player : onePlayer }))
     .catch(handlerError(res));
 };

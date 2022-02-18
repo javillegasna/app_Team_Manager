@@ -1,4 +1,4 @@
-import  axios  from "axios";
+import axios from "axios";
 import { useState } from "react";
 import API_URL from "../utils/constants";
 import PlayersContext from "./PlayerContext";
@@ -14,47 +14,42 @@ const PlayerState = (props) => {
       )
       .catch((err) => console.log(err));
   };
-  const getItems=(set)=>{
+  const getItems = (set) => {
     axios
       .get(`${API_URL}/player/`)
       .then((res) => {
         set(res.data.player);
       })
       .catch((err) => console.log(err));
-  }
-  const getItem=(id,set)=>{
+  };
+  const getItem = (id, set) => {
     axios
       .get(`${API_URL}/player/${id}`)
       .then((res) => {
         set(res.data.player);
       })
       .catch((err) => console.log(err));
-  }
-  const postItem=(data)=>{
+  };
+  const postItem = (data) =>
     axios
-      .post(`${API_URL}/player/`,data)
+      .post(`${API_URL}/player/`, data)
       .then((res) => {
         const { player } = res.data;
         setPlayers([player, ...players]);
       })
-      .catch((err)=>handlerError(err.response.data));
-  }
-  const putItem=(id,data)=>{
+      .catch((err) => err.response.data.data.errors);
+  const putItem = (id, data) =>
     axios
-    .put(`${API_URL}/player/${id}`,data)
-    .then((res) => {
-      const { player } = res.data;
-      const filteredItems=players.filter((player) => res.data._id !== player._id)
-      setPlayers([player, ...filteredItems]);
-    })
-    .catch((err)=>handlerError(err.response.data));
-  }
-  //Controllers
-  const handlerError = (dataError) => {
-    const { errors } = dataError.data;
-    console.log(errors);
-    // const ErrorsTags = Object.keys(errors);
-  };
+      .put(`${API_URL}/player/${id}`, data)
+      .then((res) => {
+        const { player } = res.data;
+        const filteredItems = players.filter(
+          (player) => res.data.player._id !== player._id
+        );
+        setPlayers([player, ...filteredItems]);
+      })
+      .catch((err) => console.log(err.response.data.data.errors));
+
   return (
     <PlayersContext.Provider
       value={{
@@ -64,7 +59,7 @@ const PlayerState = (props) => {
         getItems,
         getItem,
         postItem,
-        putItem
+        putItem,
       }}
     >
       {props.children}

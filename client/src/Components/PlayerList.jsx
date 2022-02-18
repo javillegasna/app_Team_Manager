@@ -9,8 +9,7 @@ const PlayerList = () => {
   const renderItem = () =>
     players.map((player, index) => (
       <tr key={`Player${index}`}>
-        <th scope="row"></th>
-        <td><Link to={`/players/${player.id}`}>{player.name}</Link></td>
+        <td><Link to={`/players/${player._id}`}>{player.name}</Link></td>
         <td>{player.position}</td>
         <td>
           <IconButton
@@ -22,7 +21,7 @@ const PlayerList = () => {
       </tr>
     ));
   return (
-    <table className="table" style={{ width: "22rem" }}>
+    <table className="table container text-center" style={{ width: "22rem" }}>
       <thead>
         <tr>
           <th scope="col">Team Name</th>

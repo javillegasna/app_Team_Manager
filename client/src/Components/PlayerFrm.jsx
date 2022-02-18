@@ -1,19 +1,57 @@
 import { useContext, useState } from "react";
 import ProductsContext from "../contexts/PlayerContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const PlayerFrm = () => {
+  const navigate = useNavigate();
   //Parameters URL
   const { id } = useParams();
   //Context
-  const { postItem} = useContext(ProductsContext);
+  const { postItem } = useContext(ProductsContext);
   //Estates
-  const [player,setPlayer]=useState({name:"",position:"",Game1:"Undecided",Game2:"Undecided",Game3:"Undecided"});
-  const [errors,setErrors]=useState({name:false,position:false,Game1:false,Game2:false,Game3:false})
-  const [msgErrors,setMsgErrors]=useState({name:"Min 2 characters long",position:"",Game1:"Is required",Game2:"Is required",Game3:"Is required"})
+  const [player, setPlayer] = useState({
+    name: "",
+    position: "",
+    game1: "Undecided",
+    game2: "Undecided",
+    game3: "Undecided",
+  });
+  const [errors, setErrors] = useState({
+    name: false,
+    position: false,
+    game1: false,
+    game2: false,
+    game3: false,
+  });
+  const [msgErrors, setMsgErrors] = useState({
+    name: "Min 2 characters long",
+    position: "",
+    game1: "Is required",
+    game2: "Is required",
+    game3: "Is required",
+  });
   //Utilities
-  const handlerSubmit = (e) => {
+  //const updateErrors=(dataToUpdate,value)=>dataToUpdate.reduce((acc, keyError)=>({...acc,[keyError]:value}),{...errors});
+  const handlerUpdateList = (action, value, dataToUpdate, target) => {
+    const tags = Object.keys(dataToUpdate);
+    const newTarget = tags.reduce(
+      (acc, tag) => ({ ...acc, [tag]: value }),
+      { ...target }
+    );
+    action(newTarget);
+  };
+  const handlerSubmit = async (e) => {
     e.preventDefault();
-    postItem(player)
+    const errorsBack = await postItem(player);
+    //errors
+    if(errorsBack){
+      //Error states
+      handlerUpdateList(setErrors, true, errorsBack, errors);
+      //Message to the backend
+      setMsgErrors(Object.keys(errorsBack).reduce((acc,tag)=>({...acc,[tag]:errorsBack[tag].message}),{...msgErrors}));
+    }else{
+      handlerUpdateList(setErrors, false, player, errors);
+      navigate("/")
+    }
   };
 
   return (
@@ -32,10 +70,14 @@ const PlayerFrm = () => {
           type="text"
           name="name"
           id="name"
-          onChange={(e) => {setPlayer({...player,name:e.target.value})}}
+          onChange={(e) => {
+            setPlayer({ ...player, name: e.target.value });
+            //it's necessary consider the specific situation to replicate the backend
+            handlerUpdateList(setErrors,e.target.value.length <2,{name:""},errors);
+          }}
           value={player.name}
         />
-        {errors.name && <p className="text-danger">Title is required</p>}
+        {errors.name && <p className="text-danger">{msgErrors.name}</p>}
       </fieldset>
 
       <fieldset>
@@ -47,9 +89,12 @@ const PlayerFrm = () => {
           type="text"
           name="position"
           id="position"
-          onChange={(e) => {setPlayer({...player,position:e.target.value})}}
+          onChange={(e) => {
+            setPlayer({ ...player, position: e.target.value });
+          }}
           value={player.position}
         />
+        {errors.position && <p className="text-danger">{msgErrors.position}</p>}
       </fieldset>
       <button className="btn btn-primary mb-3 container">
         {id ? "Update" : "Create"}
